@@ -102,13 +102,29 @@ class InstagramService
     url_for "/#{@user}", api: false
   end
 
-  def profile_html_content
-    @profile_html_content ||= RestClient.get profile_html_url
-  end
+  # def profile_html_content
+  #   @profile_html_content ||= RestClient.get profile_html_url
+  # end
 
-  def profile_html_document
-    Nokogiri::HTML(profile_html_content)
-  end
+  # def profile_html_document
+  #   Nokogiri::HTML(profile_html_content)
+  # end
+
+  # def script_tag_with_json
+  #   profile_html_document.css("script").find { |script| script.text =~ /window\._jscalls/ }
+  # end
+
+  # def script_tag_json
+  #   script_tag_with_json.text.split("window._jscalls = ").last.gsub(/;$/, '') if script_tag_with_json
+  # end
+
+  # def script_tag_content
+  #   if script_tag_json
+  #     JSON.parse script_tag_json.gsub(/'/, '"')
+  #   else
+  #     []
+  #   end
+  # end
 
   def recent_photos
     []
