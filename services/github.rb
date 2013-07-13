@@ -7,20 +7,25 @@ class GithubService
     JSON.generate new(user: user).to_h
   end
 
-  def self.url_for(path)
+  def self.url_for(path, api: true)
     if path =~ /^http:/
       path
     else
-      "https://api.github.com#{path}"
+      api_text = if api then "api." else "" end
+      "https://#{api_text}github.com#{path}"
     end
   end
 
-  def url_for(path)
-    self.class.url_for(path)
+  def url_for(*args)
+    self.class.url_for(*args)
   end
 
   def initialize(user: user)
     @user = user
+  end
+
+  def get(path, **params)
+    RestClient.get path, accept: :json, params: params
   end
 
   def profile_url
@@ -28,7 +33,7 @@ class GithubService
   end
 
   def profile_json
-    RestClient.get profile_url
+    get profile_url
   end
 
   def profile
@@ -40,7 +45,7 @@ class GithubService
   end
 
   def starred_json_size
-    response = RestClient.get starred_url
+    response = get starred_url
 
     result = JSON.parse(response).size
 
@@ -55,7 +60,7 @@ class GithubService
 
       result *= page - 1
 
-      last_page_response = RestClient.get last_page_url
+      last_page_response = get last_page_url
       result += JSON.parse(last_page_response).size
     end
 
@@ -63,7 +68,7 @@ class GithubService
   end
 
   def profile_html_url
-    "https://github.com/#{@user}"
+    url_for "/#{@user}", api: false
   end
 
   def profile_html_content

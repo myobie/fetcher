@@ -1,1 +1,2 @@
+source ./.powenv
 bundle exec irb -r./app
