@@ -5,6 +5,7 @@ require 'rest-client'
 class InstagramService
   class MissingClientId < StandardError; end
   class MissingClientSecret < StandardError; end
+  class MissingAccessToken < StandardError; end
   class MissingRedirectURL < StandardError; end
   class CannotFindUserId < StandardError; end
 
@@ -22,6 +23,10 @@ class InstagramService
 
   def self.redirect_url
     ENV["INSTAGRAM_REDIRECT_URL"] || raise(MissingRedirectURL)
+  end
+
+  def self.access_token
+    ENV["INSTAGRAM_ACCESS_TOKEN"] || raise(MissingAccessToken)
   end
 
   def self.url_for(path, api: true, version: true)
@@ -44,7 +49,8 @@ class InstagramService
 
   def api_params(**params)
     {
-      client_id: self.class.client_id
+      client_id: self.class.client_id,
+      access_token: self.class.access_token
     }.merge(params)
   end
 
@@ -112,16 +118,22 @@ class InstagramService
     url_for "/#{@user}", api: false, version: false
   end
 
-  def authorize_url
-    url_for "/oauth/authorize", version: false
+  def recent_photos_url
+    url_for "/users/#{user_id}/media/recent"
   end
 
-  def authorization_code
-    response = get authorize_url, response_type: 'code', redirect_uri: self.class.redirect_url
+  def recent_photos_json
+    get(recent_photos_url, count: 4)
   end
 
   def recent_photos
-    []
+    data(recent_photos_json).map do |image|
+      {
+        html_url: image["link"],
+        image: image["images"]["standard_resolution"],
+        tags: image["tags"] || []
+      }
+    end
   end
 
   def to_h
