@@ -4,6 +4,8 @@ require 'rest-client'
 
 class InstagramService
   class MissingClientId < StandardError; end
+  class MissingClientSecret < StandardError; end
+  class MissingRedirectURL < StandardError; end
   class CannotFindUserId < StandardError; end
 
   def self.json_for_user(user)
@@ -14,12 +16,20 @@ class InstagramService
     ENV["INSTAGRAM_CLIENT_ID"] || raise(MissingClientId)
   end
 
-  def self.url_for(path, api: true)
+  def self.client_secret
+    ENV["INSTAGRAM_CLIENT_SECRET"] || raise(MissingClientSecret)
+  end
+
+  def self.redirect_url
+    ENV["INSTAGRAM_REDIRECT_URL"] || raise(MissingRedirectURL)
+  end
+
+  def self.url_for(path, api: true, version: true)
     if path =~ /^http:/
       path
     else
       api_text = if api then "api." else "" end
-      version_text = if api then "/v1" else "" end
+      version_text = if version then "/v1" else "" end
       "https://#{api_text}instagram.com#{version_text}#{path}"
     end
   end
@@ -99,32 +109,16 @@ class InstagramService
   end
 
   def profile_html_url
-    url_for "/#{@user}", api: false
+    url_for "/#{@user}", api: false, version: false
   end
 
-  # def profile_html_content
-  #   @profile_html_content ||= RestClient.get profile_html_url
-  # end
+  def authorize_url
+    url_for "/oauth/authorize", version: false
+  end
 
-  # def profile_html_document
-  #   Nokogiri::HTML(profile_html_content)
-  # end
-
-  # def script_tag_with_json
-  #   profile_html_document.css("script").find { |script| script.text =~ /window\._jscalls/ }
-  # end
-
-  # def script_tag_json
-  #   script_tag_with_json.text.split("window._jscalls = ").last.gsub(/;$/, '') if script_tag_with_json
-  # end
-
-  # def script_tag_content
-  #   if script_tag_json
-  #     JSON.parse script_tag_json.gsub(/'/, '"')
-  #   else
-  #     []
-  #   end
-  # end
+  def authorization_code
+    response = get authorize_url, response_type: 'code', redirect_uri: self.class.redirect_url
+  end
 
   def recent_photos
     []
