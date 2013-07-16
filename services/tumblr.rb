@@ -43,13 +43,14 @@ class TumblrService
     params[:oauth_version] = '1.0'
     params[:oauth_signature] = oauth_sig(verb, url, **params)
 
-    header = params.map do |key, value|
+    header = []
+    params.map do |key, value|
       if key.to_s.include?('oauth')
-        "#{key.to_s}=#{value}"
+        header << "#{key.to_s}=#{value}"
       end
-    end.compact
+    end
 
-    "OAuth #{header.join(", ")}".tap { |h| puts h }
+    "OAuth #{header.join(", ")}"
   end
 
   def self.oauth_sig(verb, url, **params)
@@ -57,8 +58,9 @@ class TumblrService
 
     params = Hash[params.sort_by{ |key, value| key.to_s}]
 
-    encoded = params.map do |key, value|
-      "#{key.to_s}=#{URI.encode(value.to_s, /[^a-z0-9\-\.\_\~]/i)}"
+    encoded = []
+    params.map do |key, value|
+      encoded << "#{key.to_s}=#{URI.encode(value.to_s, /[^a-z0-9\-\.\_\~]/i)}"
     end
 
     parts << URI.encode(encoded.join('&'), /[^a-z0-9\-\.\_\~]/i)
@@ -75,7 +77,7 @@ class TumblrService
     else
       api_text = if api then "api." else "" end
       version_text = if version then "/v2" else "" end
-      "https://#{api_text}tumblr.com#{version_text}#{path}"
+      "http://#{api_text}tumblr.com#{version_text}#{path}"
     end
   end
 
@@ -87,25 +89,16 @@ class TumblrService
     @user = user
   end
 
-  def api_params(**params)
-    {
-      api_key: self.class.api_key
-    }.merge(params)
-  end
+  def get(path, oauth: false, **params)
+    args = { accept: :json, params: params }
 
-  def get(path, **params)
-    params = api_params(**params)
-    RestClient.get(path, accept: :json,
-                         params: params,
-                         headers: {
-                           "Authorization" => self.class.oauth_header(:get, path, **params),
-                           "Content-Type" => 'application/x-www-form-urlencoded'
-                         }) do |res, req, result, &blk|
-                           puts req.inspect
-                           puts res.inspect
-                           puts result.inspect
-                           res
-                         end
+    if oauth
+      args[:authorization] = self.class.oauth_header(:get, path, **params)
+    else
+      args[:params][:api_key] = self.class.api_key
+    end
+
+    RestClient.get path, args
   end
 
   def data(json)
@@ -136,8 +129,16 @@ class TumblrService
     blog_info["url"]
   end
 
+  def likes_url
+    url_for "/user/likes"
+  end
+
+  def likes_json
+    get likes_url, oauth: true, limit: 1
+  end
+
   def likes_count
-    blog_info["likes"]
+    data(likes_json)["liked_count"]
   end
 
   def followers_url
@@ -145,7 +146,7 @@ class TumblrService
   end
 
   def followers_json
-    get followers_url, limit: 1
+    get followers_url, oauth: true, limit: 1
   end
 
   def followers_count
