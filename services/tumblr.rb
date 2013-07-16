@@ -153,12 +153,178 @@ class TumblrService
     data(followers_json)["total_users"]
   end
 
+  def latest_posts_url
+    url_for "/blog/#{@user}.tumblr.com/posts"
+  end
+
+  def latest_posts_json
+    get latest_posts_url, limit: 3, filter: 'text'
+  end
+
+  def latest_posts
+    data(latest_posts_json)["posts"]
+  end
+
+  def latest
+    latest_posts.map do |post|
+      puts post.inspect
+      TumblrPost.detect(post).to_h
+    end
+  end
+
   def to_h
     {
       url: html_url,
       posts_count: posts_count,
       likes_count: likes_count,
-      followers_count: followers_count
+      followers_count: followers_count,
+      latest: latest
     }
+  end
+end
+
+class TumblrPost
+  def self.detect(params)
+    case params["type"]
+    when "photo"
+      TumblrPhotoPost.new(params)
+    when "text", "chat"
+      TumblrTextPost.new(params)
+    when "link"
+      TumblrLinkPost.new(params)
+    when "video"
+      TumblrVideoPost.new(params)
+    else
+      new(params)
+    end
+  end
+
+  attr_accessor :params
+
+  def initialize(params)
+    @params = params
+  end
+
+  def short_url
+    params["short_url"]
+  end
+
+  def type
+    params["type"]
+  end
+
+  def date
+    params["date"]
+  end
+
+  def to_h
+    {
+      url: short_url,
+      type: type,
+      date: date
+    }
+  end
+end
+
+class TumblrLinkPost < TumblrPost
+  def title
+    params["title"]
+  end
+
+  def link_url
+    params["url"]
+  end
+
+  def description
+    params["description"]
+  end
+
+  def to_h
+    super.merge({
+      link_url: link_url,
+      description: description,
+      title: title
+    })
+  end
+end
+
+class TumblrTextPost < TumblrPost
+  def title
+    params["title"]
+  end
+
+  def body
+    params["body"]
+  end
+
+  def to_h
+    super.merge({
+      title: title,
+      body: body
+    })
+  end
+end
+
+class TumblrVideoPost < TumblrPost
+  def caption
+    params["caption"]
+  end
+
+  def thumbnail
+    {
+      url: params["thumbnail_url"],
+      width: params["thumbnail_width"],
+      height: params["thumbnail_height"]
+    }
+  end
+
+  def to_h
+    super.merge({
+      thumbnail: thumbnail,
+      caption: caption
+    })
+  end
+end
+
+class TumblrPhotoPost < TumblrPost
+  def photos
+    params["photos"].map do |photo|
+      {
+        caption: photo["caption"],
+        image: photo["alt_sizes"].first
+      }
+    end
+  end
+
+  def source_url
+    params["source_url"]
+  end
+
+  def mulitple?
+    params["photos"].length > 1
+  end
+
+  def photo_or_photos
+    if mulitple?
+      { photos: photos }
+    else
+      { photo: photos.first }
+    end
+  end
+
+  def caption
+    params["caption"]
+  end
+
+  def type
+    if mulitple?
+      "photoset"
+    else
+      "photo"
+    end
+  end
+
+  def to_h
+    super.merge(photo_or_photos).merge(description: caption, source_url: source_url)
   end
 end
