@@ -55,7 +55,7 @@ class InstagramService
   end
 
   def get(path, **params, &blk)
-    RestClient.get path, accept: :json, params: api_params(params), &blk
+    RestClient.get path, accept: :json, params: api_params(**params), &blk
   end
 
   def data(json)
