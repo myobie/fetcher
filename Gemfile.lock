@@ -8,6 +8,8 @@ GEM
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
     rack (1.5.2)
+    rack-contrib (1.1.0)
+      rack (>= 0.9.1)
     rack-protection (1.5.0)
       rack
     rest-client (1.6.7)
@@ -29,6 +31,7 @@ PLATFORMS
 
 DEPENDENCIES
   nokogiri
+  rack-contrib
   rest-client
   shotgun
   sinatra

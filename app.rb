@@ -1,25 +1,24 @@
 require 'sinatra'
-require 'json'
 require './support'
 
 services :github, :medium, :instagram, :tumblr, :dribbble
 
 get "/:user", subdomain: 'medium' do
-  jsonp MediumService.json_for_user(params[:user])
+  MediumService.json_for_user(params[:user])
 end
 
 get "/:user", subdomain: 'github' do
-  jsonp GithubService.json_for_user(params[:user])
+  GithubService.json_for_user(params[:user])
 end
 
 get "/:user", subdomain: 'instagram' do
-  jsonp InstagramService.json_for_user(params[:user])
+  InstagramService.json_for_user(params[:user])
 end
 
 get "/:user", subdomain: 'tumblr' do
-  jsonp TumblrService.json_for_user(params[:user])
+  TumblrService.json_for_user(params[:user])
 end
 
 get "/:user", subdomain: 'dribbble' do
-  jsonp DribbbleService.json_for_user(params[:user])
+  DribbbleService.json_for_user(params[:user])
 end
