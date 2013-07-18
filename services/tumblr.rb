@@ -175,9 +175,9 @@ class TumblrService
   def to_h
     {
       url: html_url,
-      posts_count: posts_count,
-      likes_count: likes_count,
-      followers_count: followers_count,
+      posts: posts_count,
+      likes: likes_count,
+      followers: followers_count,
       latest: latest
     }
   end
