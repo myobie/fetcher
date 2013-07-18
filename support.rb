@@ -20,6 +20,13 @@ def subdomain(host)
   end
 end
 
+def cache
+  host = request.host
+  path = request.fullpath
+  key = [:v1, :request, host, path, :json].join(":")
+  Cache.fetch(key) { yield }
+end
+
 $redis = Redis.connect url: ENV["REDIS_URL"]
 
 class CachedValue
@@ -80,9 +87,11 @@ module Cache
         cached_value.value
       else
         write key, new_value
+        puts "}}} writing to cache for: #{key}"
         new_value
       end
     else
+      puts "}}} reading from cache for: #{key}"
       cached_value.value
     end
   end
