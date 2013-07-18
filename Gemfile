@@ -12,3 +12,7 @@ group :development do
   gem 'shotgun'
   gem 'thin'
 end
+
+group :production do
+  gem 'unicorn'
+end
