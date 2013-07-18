@@ -14,5 +14,5 @@ after_fork do |server, worker|
     puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
   end
 
-  defined?($redis) and $redis.reconnect
+  defined?($redis) and $redis.quit
 end
