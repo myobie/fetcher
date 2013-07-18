@@ -27,7 +27,7 @@ def cache
   Cache.fetch(key) { yield }
 end
 
-$redis = Redis.connect url: ENV["REDIS_URL"]
+$redis = Redis.connect url: ENV["REDIS_URL"] || ENV["OPENREDIS_URL"]
 
 class CachedValue
   attr_reader :value, :expiry
