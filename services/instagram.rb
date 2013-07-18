@@ -106,6 +106,14 @@ class InstagramService
     end
   end
 
+  def following
+    if profile["counts"]
+      profile["counts"]["follows"]
+    else
+      0
+    end
+  end
+
   def photos_count
     if profile["counts"]
       profile["counts"]["media"]
@@ -141,6 +149,7 @@ class InstagramService
       profile_url: profile_html_url,
       user_id: user_id,
       followers: followers,
+      following: following,
       photos: photos_count,
       latest: recent_photos,
     }
