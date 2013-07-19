@@ -23,7 +23,7 @@ end
 def cache
   host = request.host
   path = request.path_info
-  key = [:v1, :request, host, path, :json].join(":")
+  key = [:v2, :request, host, path, :json].join(":")
   Cache.fetch(key) { yield }
 end
 

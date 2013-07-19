@@ -167,7 +167,6 @@ class TumblrService
 
   def latest
     latest_posts.map do |post|
-      puts post.inspect
       TumblrPost.detect(post).to_h
     end
   end
@@ -214,14 +213,14 @@ class TumblrPost
   end
 
   def date
-    params["date"]
+    DateTime.parse(params["date"])
   end
 
   def to_h
     {
       url: short_url,
       type: type,
-      date: date
+      date: date.iso8601
     }
   end
 end
