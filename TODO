@@ -1,0 +1,2 @@
+* User redis to store oauth tokens
+* Make a "setup" flow so users can use their own oauth tokens to get their data from places that need oauth
