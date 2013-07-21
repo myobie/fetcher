@@ -7,6 +7,13 @@ before do
   content_type :json
 end
 
+helpers do
+  def link(url, text = nil)
+    text ||= url
+    %Q{<a href="#{url}">#{text}</a>}
+  end
+end
+
 SERVICES = []
 
 def services(*args)
