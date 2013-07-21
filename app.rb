@@ -57,7 +57,7 @@ __END__
 
 <h2>Usage</h2>
 <p>Visit http://:service.fetcher.nathanherald.com/:username
-<p>(example "<%= link "http://dribbble.fetcher.nathanherald.com/myobie"  %>)
+<p>(example <%= link "http://dribbble.fetcher.nathanherald.com/myobie"  %>)
 
 <h3>jsonp</h3>
 <p>Every endpoint supports jsonp, just append a callback params like so:
