@@ -55,6 +55,9 @@ __END__
 
 <h1>The Fetcher</h1>
 
+<h2>What is this?</h2>
+<p>I wanted to be able to include some different stats from different services on my static html website, so I build this scraper of sorts. I hope to make it better overtime, maybe even get some other people using it.
+
 <h2>Usage</h2>
 <p>Visit http://:service.fetcher.nathanherald.com/:username<br>
 (example <%= link "http://dribbble.fetcher.nathanherald.com/myobie"  %>)
