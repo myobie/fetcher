@@ -56,12 +56,12 @@ __END__
 <h1>The Fetcher</h1>
 
 <h2>Usage</h2>
-<p>Visit http://:service.fetcher.nathanherald.com/:username
-<p>(example <%= link "http://dribbble.fetcher.nathanherald.com/myobie"  %>)
+<p>Visit http://:service.fetcher.nathanherald.com/:username<br>
+(example <%= link "http://dribbble.fetcher.nathanherald.com/myobie"  %>)
 
 <h3>jsonp</h3>
-<p>Every endpoint supports jsonp, just append a callback params like so:
-<p>(example <%= link "http://dribbble.fetcher.nathanherald.com/myobie?callback=processDribble" %>)
+<p>Every endpoint supports jsonp, just append a callback params like so:<br>
+(example <%= link "http://dribbble.fetcher.nathanherald.com/myobie?callback=processDribble" %>)
 
 <h2>Services Supported</h2>
 <ul>
@@ -70,3 +70,7 @@ __END__
 <li>Instagram
 <li>Medium
 <li>Tumblr
+</ul>
+
+<h2>Source &amp; Support</h2>
+<p><%= link "https://github.com/myobie/fetcher", "Fork me" %> on GitHub.
