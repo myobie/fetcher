@@ -1,0 +1,170 @@
+<style>
+  body {
+    font: 18px/1.6 Helvetica Neue, Arial, sans-serif;
+    color: #222;
+  }
+
+  h1, h2, h3, p, ul, li {
+    font-size: 18px;
+    margin: 0 0 1em;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  h2 {
+    margin-top: 3em;
+  }
+
+  pre {
+    padding: 0;
+    margin: 0;
+    border: none !important;
+  }
+
+  div.source {
+    overflow: auto;
+    padding: 20px;
+    background: #f9f9f9;
+    margin: 0 0 1em;
+  }
+
+  div.source button {
+    margin: 2em 0;
+  }
+</style>
+
+<h1>The Fetcher</h1>
+
+<h2>What is this?</h2>
+<p>I wanted to be able to include some different stats from different services on my static html website, so I built this scraper of sorts. I hope to make it better overtime, maybe even get some other people using it.
+
+<h2>Code Examples</h2>
+<p><strong>All the code examples on this page are editable and executable as coffeescript.</strong></p>
+
+<h2>Usage</h2>
+<p>Visit http://:service.fetcher.nathanherald.com/:username
+<p>Every endpoint supports jsonp, just append a callback params like so:
+
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.parseDribbble = (data) ->
+  alert "Visit my dribbble page at #{data.profile_url}. I have #{data.projects} projects."
+
+script = document.createElement('script')
+script.async = true
+script.src = "http://dribbble.fetcher.nathanherald.com/myobie?callback=parseDribbble"
+document.body.appendChild script
+</pre>
+</div>
+
+<p>Just FYI:
+<pre class="prettyprint lang-coffee">
+window.append_script_with_src = (src) ->
+  script = document.createElement('script')
+  script.async = true
+  script.src = src
+  document.body.appendChild script
+</pre></p>
+
+<h2>Services Supported</h2>
+<ul>
+
+<li>Dribbble
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.showDribbble = (data) ->
+  result data # result is a function I made to show the result
+append_script_with_src "http://dribbble.fetcher.nathanherald.com/myobie?callback=showDribbble"
+</pre>
+</div>
+
+<li>Github
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.showGithub = (data) ->
+  result data # result is a function I made to show the result
+append_script_with_src "http://github.fetcher.nathanherald.com/myobie?callback=showGithub"
+</pre>
+</div>
+
+<li>Instagram
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.showInstagram = (data) ->
+  result data # result is a function I made to show the result
+append_script_with_src "http://instagram.fetcher.nathanherald.com/myobie?callback=showInstagram"
+</pre>
+</div>
+
+<li>Medium
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.showMedium = (data) ->
+  result data # result is a function I made to show the result
+append_script_with_src "http://medium.fetcher.nathanherald.com/myobie?callback=showMedium"
+</pre>
+</div>
+
+<li>Tumblr
+<div class="source">
+<pre class="prettyprint lang-coffee">
+window.showTumblr = (data) ->
+  result data # result is a function I made to show the result
+append_script_with_src "http://tumblr.fetcher.nathanherald.com/nathanherald?callback=showTumblr"
+</pre>
+</div>
+</ul>
+
+<h2>Source &amp; Support</h2>
+<p><%= link "https://github.com/myobie/fetcher", "Fork me on GitHub" %>.
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/coffee-script/1.6.3/coffee-script.min.js"></script>
+<script type="text/coffeescript">
+window.compile_and_eval = (source) ->
+  compiled_source = CoffeeScript.compile source, bare: on
+  eval compiled_source
+
+window.coffee = (element) ->
+  unless element.tagName is "PRE"
+    element = element.querySelector("pre")
+  compile_and_eval element.innerText
+
+window.append_script_with_src = (src) ->
+  script = document.createElement('script')
+  script.async = true
+  script.src = src
+  document.body.appendChild script
+
+window.result = (data) ->
+  pre = current_element.querySelector "pre.result"
+
+  unless pre
+    pre = document.createElement "pre"
+    pre.className = "result"
+    current_element.appendChild pre
+
+  try
+    text = JSON.stringify data, undefined, 2
+    text = "Result:\n#{text}"
+  catch error
+    text = data
+
+  pre.innerText = text
+
+scripts = document.querySelectorAll("div.source")
+for element in scripts
+  do (element) ->
+    button = document.createElement 'button'
+    button.innerText = "Run this script"
+    button.addEventListener "click", (e) ->
+      window.current_element = element
+      coffee element
+    , false
+    element.appendChild button
+    pre = element.querySelector "pre"
+    pre.contentEditable = true if pre
+</script>
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
