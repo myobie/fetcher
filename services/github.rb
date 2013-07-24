@@ -95,10 +95,20 @@ class GithubService
     profile["html_url"]
   end
 
+  def public_repos_url
+    "#{url}?tab=repositories"
+  end
+
+  def followers_url
+    "#{url}/followers"
+  end
+
   def to_h
     {
       profile_url: url,
+      public_repos_url: public_repos_url,
       public_repos: public_repos,
+      followers_url: followers_url,
       followers: followers,
       starred: starred_json_size,
       current_streak: current_streak,
