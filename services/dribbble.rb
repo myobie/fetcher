@@ -73,6 +73,10 @@ class DribbbleService
     get shots_url, per_page: 4
   end
 
+  def projects_html_url
+    "#{profile_url}/projects"
+  end
+
   def latest_shots
     @shots ||= JSON.parse(shots_json)["shots"].map do |shot|
       {
@@ -90,6 +94,7 @@ class DribbbleService
   def to_h
     {
       profile_url: profile_url,
+      projects_url: projects_html_url,
       shots: shots_count,
       likes: likes_count,
       projects: projects,
