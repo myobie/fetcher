@@ -28,7 +28,7 @@ class MediumService
   end
 
   def post_elements
-    html_document.css("div.post-bucket article.post-item")
+    html_document.css("div.bucket ul.bucket-posts li.bucket-item")
   end
 
   def items
