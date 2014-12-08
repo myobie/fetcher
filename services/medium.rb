@@ -28,7 +28,7 @@ class MediumService
   end
 
   def post_elements
-    html_document.css("div.bucket ul.bucket-posts li.bucket-item")
+    html_document.css("div.screenContent div.u-backgroundWhite .blockGroup--posts.blockGroup--latest .block-content")
   end
 
   def items
@@ -62,10 +62,10 @@ class MediumFeedItem
   attr_reader :title, :url, :time
 
   def self.from_item(item)
-    anchor = item.at("h3.post-item-title a")
+    anchor = item.at("h3.block-title a")
     new title: anchor.text,
           url: url_for(anchor["href"]),
-         time: item.at("span.reading-time").text
+         time: item.at(".block-postMeta span.readingTime").text
   end
 
   def self.url_for(string)
