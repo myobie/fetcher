@@ -80,7 +80,7 @@ class GithubService
   end
 
   def current_streak
-    profile_html_document.at("div.contrib-streak-current span.num").text
+    profile_html_document.at("div#contributions-calendar .contrib-column:last-of-type .contrib-number").text
   end
 
   def public_repos
