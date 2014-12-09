@@ -54,7 +54,7 @@ class DribbbleService
   end
 
   def projects
-    profile_html_document.at(".secondary h3.tab a span.meta").text.to_i
+    profile_html_document.at("#wrap .profile-dash .profile-stats .projects a .count").text.to_i
   end
 
   def shots_count
