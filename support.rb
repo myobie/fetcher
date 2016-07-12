@@ -85,7 +85,10 @@ module Cache
     if cached_value.refresh?
       new_value = begin
         yield
-      rescue StandardError
+      rescue StandardError => e
+        $stderr.puts "!!! #{e}"
+        $stderr.puts "!!! #{e.message}"
+        $stderr.puts e.backtrace.join("\n")
         # notify someone
         nil
       end

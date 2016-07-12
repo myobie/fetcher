@@ -3,8 +3,14 @@ require 'nokogiri'
 require 'rest-client'
 
 class DribbbleService
+  MissingAccessToken = Class.new StandardError
+
   def self.json_for_user(user)
     JSON.generate new(user: user).to_h
+  end
+
+  def self.access_token
+    ENV["DRIBBBLE_CLIENT_ACCESS_TOKEN"] || raise(MissingAccessToken)
   end
 
   def self.url_for(path, api: true, version: true)
@@ -13,8 +19,12 @@ class DribbbleService
     else
       api_text = if api then "api." else "" end
       path = "/v1#{path}"
-      "http://#{api_text}dribbble.com#{path}"
+      "https://#{api_text}dribbble.com#{path}"
     end
+  end
+
+  def api_params(**params)
+    params.merge(access_token: self.class.access_token)
   end
 
   def url_for(*args)
@@ -26,8 +36,7 @@ class DribbbleService
   end
 
   def get(path, **params)
-    args = { accept: :json, params: params }
-    RestClient.get path, args
+    RestClient.get path, accept: :json, params: api_params(**params)
   end
 
   def player_info_url
@@ -43,7 +52,7 @@ class DribbbleService
   end
 
   def profile_url
-    player_info["url"]
+    player_info["html_url"]
   end
 
   def profile_html_content
@@ -55,7 +64,7 @@ class DribbbleService
   end
 
   def projects
-    profile_html_document.at("#wrap .profile-dash .profile-stats .projects a .count").text.to_i
+    player_info["projects_count"]
   end
 
   def shots_count
@@ -71,7 +80,7 @@ class DribbbleService
   end
 
   def shots_json
-    get shots_url, per_page: 4
+    get shots_url, per_page: 20
   end
 
   def projects_html_url
@@ -79,12 +88,14 @@ class DribbbleService
   end
 
   def latest_shots
-    @shots ||= JSON.parse(shots_json)["shots"].map do |shot|
+    @shots ||= JSON.parse(shots_json).map do |shot|
+      images = shot.fetch("images")
+      image_url = images.fetch("hidpi") { images.fetch("normal") }
       {
-        url: shot["short_url"],
+        url: shot["html_url"],
         title: shot["title"],
         image: {
-          url: shot["image_url"],
+          url: image_url,
           width: shot["width"],
           height: shot["height"]
         }
