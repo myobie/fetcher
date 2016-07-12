@@ -11,7 +11,7 @@ class MediumService
     JSON.generate new(user: user).to_h
   end
 
-  def initialize(user: user)
+  def initialize(user:)
     @user = user
   end
 
@@ -76,7 +76,7 @@ class MediumFeedItem
     end
   end
 
-  def initialize(title: title, url: url, time: time)
+  def initialize(title:, url:, time:)
     @title = title
     @url = url
     @time = time

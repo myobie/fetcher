@@ -1,10 +1,10 @@
-ruby '2.1.5'
+ruby '2.3.1'
 
 source "https://rubygems.org"
 
 gem 'sinatra'
 gem 'rack-contrib'
-gem 'nokogiri'
+gem 'nokogiri', '1.6.7.2'
 gem 'rest-client'
 gem 'redis'
 

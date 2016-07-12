@@ -43,7 +43,7 @@ class InstagramService
     self.class.url_for(*args)
   end
 
-  def initialize(user: user)
+  def initialize(user:)
     @user = user
   end
 

@@ -12,6 +12,7 @@ class DribbbleService
       path
     else
       api_text = if api then "api." else "" end
+      path = "/v1#{path}"
       "http://#{api_text}dribbble.com#{path}"
     end
   end
@@ -20,7 +21,7 @@ class DribbbleService
     self.class.url_for(*args)
   end
 
-  def initialize(user: user)
+  def initialize(user:)
     @user = user
   end
 
@@ -30,7 +31,7 @@ class DribbbleService
   end
 
   def player_info_url
-    url_for "/players/#{@user}"
+    url_for "/users/#{@user}"
   end
 
   def player_info_json
@@ -66,7 +67,7 @@ class DribbbleService
   end
 
   def shots_url
-    url_for "/players/#{@user}/shots"
+    url_for "/users/#{@user}/shots"
   end
 
   def shots_json

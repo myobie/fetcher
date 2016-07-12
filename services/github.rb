@@ -20,7 +20,7 @@ class GithubService
     self.class.url_for(*args)
   end
 
-  def initialize(user: user)
+  def initialize(user:)
     @user = user
   end
 
@@ -53,7 +53,7 @@ class GithubService
     possible_last_link = if link then link.split(",")[1] end
 
     if possible_last_link && possible_last_link =~ /last/
-      last_page_url, rel = possible_last_link.split(";").map(&:strip)
+      last_page_url, _ = possible_last_link.split(";").map(&:strip)
       last_page_url.gsub!(/^</, '')
       last_page_url.gsub!(/>$/, '')
       page = last_page_url.split("=").last.to_i
