@@ -131,7 +131,7 @@ class InstagramService
   end
 
   def recent_photos_json
-    get(recent_photos_url, count: 4)
+    get(recent_photos_url, count: 20)
   end
 
   def recent_photos
